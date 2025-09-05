@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-kc7t(7mxon5&qp(+(f)f!-@z((d69u7ay^y4jy+j29nn-b^p8z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['hazard-api.onrender.com', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['https://hazard-api.onrender.com']
+
 
 
 
@@ -52,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
 
 ROOT_URLCONF = 'ocean_rest_main.urls'
 
@@ -118,16 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
-
-# Collect static files here when you deploy
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Enable WhiteNoise to compress and cache static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
