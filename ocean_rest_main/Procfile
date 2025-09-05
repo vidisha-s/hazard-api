@@ -1,0 +1,1 @@
+web: gunicorn ocean_rest_main.wsgi
