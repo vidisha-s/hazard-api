@@ -6,8 +6,7 @@ from .serializers import UserProfileSerializer, HazardReportSerializer
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]  # only logged-in users
-
+    
     def perform_create(self, serializer):
         # Automatically attach logged-in user to the profile
         serializer.save(user=self.request.user)
@@ -17,4 +16,4 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class HazardReportViewSet(viewsets.ModelViewSet):
     queryset = HazardReport.objects.all()
     serializer_class = HazardReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
