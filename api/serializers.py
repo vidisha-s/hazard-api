@@ -3,49 +3,60 @@ from django.contrib.auth.models import User
 from .models import UserProfile, HazardReport
 
 
+# -------------------------
+# User Serializer
+# -------------------------
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email"]
 
 
+# -------------------------
+# User Profile Serializer
+# -------------------------
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source="user", write_only=True
-    )
+    user = UserSerializer(read_only=True)  # Nested display
 
     class Meta:
         model = UserProfile
-        fields = ["id", "user", "user_id", "role"]
+        fields = ["id", "user", "role", "phone", "address"]
 
 
+# -------------------------
+# Hazard Report Serializer
+# -------------------------
 class HazardReportSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source="user", write_only=True, required=False
-    )
+    user = UserSerializer(read_only=True)  # Show user details
 
     class Meta:
         model = HazardReport
         fields = [
             "id",
-            "user",
-            "user_id",
             "description",
             "latitude",
             "longitude",
             "media_url",
             "status",
             "created_at",
+            "user",
         ]
-        extra_kwargs = {
-            "created_at": {"read_only": True},
-            "status": {"required": False},
-        }
+        read_only_fields = ["id", "created_at", "user", "status"]
 
+    # ✅ Assign logged-in user automatically on create
     def create(self, validated_data):
-        # auto-assign logged-in user if user_id is not given
-        if "user" not in validated_data:
-            validated_data["user"] = self.context["request"].user
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            validated_data["user"] = request.user
         return super().create(validated_data)
+
+    # ✅ Ensure only the owner can update
+    def update(self, instance, validated_data):
+        request = self.context.get("request")
+        if request and instance.user != request.user:
+            raise serializers.ValidationError(
+                {"error": "You can only update your own reports."}
+            )
+        return super().update(instance, validated_data)
+
+            
