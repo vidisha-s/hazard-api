@@ -20,6 +20,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
+        # fields = ["id","users","role","phone","address"]
 
 
 # -------------------------
