@@ -9,18 +9,18 @@ from .models import UserProfile, HazardReport
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email"]
+        fields = ["id","username","email"]
 
 
 # -------------------------
 # User Profile Serializer
 # -------------------------
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)  # Nested display
+    # user = UserSerializer(read_only=True)  # Nested display
 
     class Meta:
         model = UserProfile
-        fields = ["id", "user", "role", "phone", "address"]
+        fields = []
 
 
 # -------------------------
